@@ -19,7 +19,7 @@ from .simulation_service import (
 )
 
 
-app = FastAPI(title="PhishShield Portal", version="1.0.0")
+app = FastAPI(title="Lurex Portal", version="1.0.0")
 app.mount("/static", StaticFiles(directory=STATIC_DIR), name="static")
 
 
@@ -41,6 +41,11 @@ def portal_css() -> FileResponse:
 @app.get("/portal.js")
 def portal_js() -> FileResponse:
     return FileResponse(STATIC_DIR / "portal.js")
+
+
+@app.get("/lurex-logo.svg")
+def lurex_logo() -> FileResponse:
+    return FileResponse(STATIC_DIR / "lurex-logo.svg")
 
 
 @app.get("/training.html", response_class=HTMLResponse)

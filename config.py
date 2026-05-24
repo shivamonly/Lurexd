@@ -6,7 +6,7 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent
 STATIC_DIR = BASE_DIR / "static"
-DATABASE_PATH = BASE_DIR / "data" / "phishshield.db"
+DATABASE_PATH = BASE_DIR / "data" / "lurex.db"
 
 SIMULATION_STATUS_ORDER = {"Sent": 0, "Opened": 1, "Clicked": 2, "Compromised": 3}
 

@@ -1,4 +1,4 @@
-# PhishShield Portal
+# Lurex Portal
 
 Interactive local cybersecurity training portal with two workflows:
 
@@ -58,4 +58,4 @@ The simulator does not send external email. Every generated lure URL routes to `
 | Email filter mechanisms | Header validator, lexical scanner, URL scanner | Risk Gauge and Breakdown |
 | Fake website detection | URL structure checks and Levenshtein look-alike matching | Analyze URL tab |
 
-SQLite data is created at `phishshield_portal/data/phishshield.db`.
+SQLite data is created at `phishshield_portal/data/lurex.db`.

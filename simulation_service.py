@@ -111,7 +111,7 @@ def training_landing_page(log_id: int) -> str:
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>PhishShield Training Moment</title>
+        <title>Lurex Training Moment</title>
         <style>
           :root {{ color-scheme: dark; font-family: 'Segoe UI', system-ui, sans-serif; }}
           body {{ min-height: 100vh; margin: 0; display: grid; place-items: center; background: #0f172a; color: #f8fafc; }}
@@ -127,7 +127,7 @@ def training_landing_page(log_id: int) -> str:
           <span class="tag">Safe Test Mode</span>
           <h1>This was a test. You clicked on a simulated link.</h1>
           <p>No credentials were collected and no external mail system was used. Log #{log_id} has been updated locally so the evaluator can review the training event.</p>
-          <p><a href="/">Return to PhishShield Portal</a></p>
+          <p><a href="/">Return to Lurex Portal</a></p>
         </main>
       </body>
     </html>

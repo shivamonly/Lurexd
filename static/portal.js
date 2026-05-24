@@ -18,7 +18,7 @@ const simulationStatusColors = {
   Compromised: "#fda4af",
 };
 
-const demoStorageKey = "phishshield.portal.demo.v1";
+const demoStorageKey = "lurex.portal.demo.v1";
 const demoTemplates = [
   {
     key: "microsoft_reset",

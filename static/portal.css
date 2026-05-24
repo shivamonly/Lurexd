@@ -1,4 +1,4 @@
-/* PhishShield Portal application styles. */
+/* Lurex Portal application styles. */
 :root {
   color-scheme: dark;
   --bg: #0f172a;
@@ -71,42 +71,37 @@ button {
 .brand {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
   color: var(--text);
   text-decoration: none;
+  min-height: 58px;
 }
 
-.brand-mark {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius);
-  display: grid;
-  place-items: center;
-  background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(52, 211, 153, 0.16));
-  border: 1px solid rgba(56, 189, 248, 0.45);
-  color: var(--blue);
+.brand-logo {
+  width: 164px;
+  height: auto;
+  display: block;
+  filter: drop-shadow(0 10px 22px rgba(56, 189, 248, 0.16));
 }
 
-.brand strong,
+.brand-subtitle {
+  min-height: 22px;
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 1px solid rgba(56, 189, 248, 0.32);
+  border-radius: 999px;
+  color: #cbd5e1;
+  font-size: 12px;
+  font-weight: 800;
+}
+
 h1,
 h2,
 h3,
 .metric-tile strong {
   font-family: "Rajdhani", "IBM Plex Sans", sans-serif;
   letter-spacing: 0;
-}
-
-.brand strong {
-  display: block;
-  font-size: 22px;
-  line-height: 1;
-}
-
-.brand small {
-  display: block;
-  margin-top: 3px;
-  color: var(--muted);
-  font-size: 13px;
 }
 
 .nav-stack {

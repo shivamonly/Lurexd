@@ -1,1 +1,1 @@
-"""PhishShield Portal application package."""
+"""Lurex Portal application package."""
