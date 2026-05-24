@@ -43,6 +43,16 @@ def portal_js() -> FileResponse:
     return FileResponse(STATIC_DIR / "portal.js")
 
 
+@app.get("/lurex-favicon.svg")
+def lurex_favicon() -> FileResponse:
+    return FileResponse(STATIC_DIR / "lurex-favicon.svg")
+
+
+@app.get("/favicon.ico")
+def favicon() -> FileResponse:
+    return FileResponse(STATIC_DIR / "lurex-favicon.svg", media_type="image/svg+xml")
+
+
 @app.get("/training.html", response_class=HTMLResponse)
 def static_training_page() -> FileResponse:
     return FileResponse(STATIC_DIR / "training.html")
