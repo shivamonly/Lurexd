@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PhishShield Training Moment</title>
+    <style>
+      :root {
+        color-scheme: dark;
+        font-family: "Segoe UI", system-ui, sans-serif;
+        --bg: #0f172a;
+        --panel: #111827;
+        --line: #334155;
+        --text: #f8fafc;
+        --muted: #cbd5e1;
+        --blue: #38bdf8;
+        --yellow: #facc15;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        min-height: 100vh;
+        margin: 0;
+        display: grid;
+        place-items: center;
+        padding: 18px;
+        background:
+          linear-gradient(rgba(56, 189, 248, 0.05) 1px, transparent 1px),
+          linear-gradient(90deg, rgba(56, 189, 248, 0.04) 1px, transparent 1px),
+          var(--bg);
+        background-size: 48px 48px;
+        color: var(--text);
+      }
+
+      main {
+        width: min(720px, 100%);
+        border: 1px solid var(--line);
+        border-radius: 8px;
+        padding: clamp(24px, 5vw, 40px);
+        background: var(--panel);
+        box-shadow: 0 24px 80px rgba(0, 0, 0, 0.35);
+      }
+
+      .tag {
+        display: inline-flex;
+        padding: 6px 10px;
+        border: 1px solid var(--yellow);
+        color: var(--yellow);
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+        letter-spacing: 0;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        font-size: clamp(32px, 5vw, 56px);
+        line-height: 1;
+        margin: 18px 0;
+      }
+
+      p {
+        color: var(--muted);
+        font-size: 18px;
+        line-height: 1.6;
+      }
+
+      a {
+        color: var(--blue);
+        font-weight: 800;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <span class="tag">Safe Test Mode</span>
+      <h1>This was a test. You clicked on a simulated link.</h1>
+      <p>No credentials were collected and no external mail system was used. This static training page is safe for Netlify deployments.</p>
+      <p><a href="/">Return to PhishShield Portal</a></p>
+    </main>
+  </body>
+</html>

@@ -9,6 +9,7 @@ Interactive local cybersecurity training portal with two workflows:
 
 ```text
 phishshield_portal/
+  netlify.toml             Netlify static deploy configuration
   main.py                  FastAPI routes and app startup
   config.py                Shared paths, templates, regex rules, and constants
   database.py              SQLite connection, schema creation, and demo seed data
@@ -19,6 +20,7 @@ phishshield_portal/
     index.html             Portal layout
     portal.css             Visual system and responsive layout
     portal.js              Browser interactions and API calls
+    training.html          Static safe-click education page
   data/
     .gitkeep               Runtime SQLite database folder
 ```
@@ -31,6 +33,17 @@ python -m uvicorn phishshield_portal.main:app --host 127.0.0.1 --port 8000
 ```
 
 Then open http://127.0.0.1:8000.
+
+## Deploy To Netlify
+
+This repository is Netlify-friendly as a static deploy:
+
+1. Push this `phishshield_portal` repository to GitHub.
+2. In Netlify, import the GitHub repository.
+3. Netlify will read `netlify.toml` and publish the `static` folder.
+4. Leave the build command empty.
+
+On Netlify, the browser uses a local demo data store because Netlify static hosting does not run the FastAPI/SQLite backend. The local FastAPI backend still works when you run the app with Uvicorn.
 
 ## Safety Model
 

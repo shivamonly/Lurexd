@@ -18,6 +18,38 @@ const simulationStatusColors = {
   Compromised: "#fda4af",
 };
 
+const demoStorageKey = "phishshield.portal.demo.v1";
+const demoTemplates = [
+  {
+    key: "microsoft_reset",
+    title: "Urgent Microsoft Reset",
+    subject: "Action required: password reset pending",
+    preview: "A familiar enterprise password reset notice with local-only tracking links.",
+    accent: "blue",
+  },
+  {
+    key: "netflix_billing",
+    title: "Netflix Billing Failure",
+    subject: "Your subscription payment could not be processed",
+    preview: "Consumer billing pressure pattern for awareness training.",
+    accent: "red",
+  },
+  {
+    key: "payroll_update",
+    title: "Payroll Deposit Update",
+    subject: "Confirm direct deposit details before payroll cutoff",
+    preview: "Finance-themed lure using urgency and sensitive-data language.",
+    accent: "yellow",
+  },
+  {
+    key: "shipping_notice",
+    title: "Missed Delivery Notice",
+    subject: "Delivery exception: address confirmation needed",
+    preview: "Parcel-style notification with a dummy redirect for local education.",
+    accent: "green",
+  },
+];
+
 const $ = (selector) => document.querySelector(selector);
 const $$ = (selector) => Array.from(document.querySelectorAll(selector));
 
@@ -51,15 +83,283 @@ function formatTime(value) {
 }
 
 async function requestJson(path, options = {}) {
-  const response = await fetch(path, {
-    headers: { "Content-Type": "application/json", ...(options.headers || {}) },
-    ...options,
-  });
-  const data = await response.json().catch(() => ({}));
-  if (!response.ok) {
-    throw new Error(data.detail || "Request failed");
+  try {
+    const response = await fetch(path, {
+      headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+      ...options,
+    });
+    const contentType = response.headers.get("content-type") || "";
+    const data = contentType.includes("application/json") ? await response.json() : null;
+    if (!response.ok) {
+      const apiError = new Error(formatApiError(data?.detail || "Request failed"));
+      apiError.fromApi = Boolean(data);
+      throw apiError;
+    }
+    if (!data) {
+      throw new Error("Static host response");
+    }
+    return data;
+  } catch (error) {
+    if (error.fromApi) {
+      throw error;
+    }
+    return handleDemoApiRequest(path, options, error);
   }
-  return data;
+}
+
+function formatApiError(detail) {
+  if (typeof detail === "string") return detail;
+  if (Array.isArray(detail)) return detail.map((item) => item.msg || String(item)).join(", ");
+  return "Request failed";
+}
+
+function readDemoData() {
+  const stored = localStorage.getItem(demoStorageKey);
+  if (stored) {
+    try {
+      return JSON.parse(stored);
+    } catch {
+      localStorage.removeItem(demoStorageKey);
+    }
+  }
+
+  const seeded = {
+    nextLogId: 6,
+    events: [
+      createDemoEvent(1, "Quarterly Awareness Drill", "maya@northwind.example", "Sent"),
+      createDemoEvent(2, "Quarterly Awareness Drill", "dev@northwind.example", "Opened"),
+      createDemoEvent(3, "Payroll Resilience Test", "finance@northwind.example", "Clicked"),
+      createDemoEvent(4, "Credential Hygiene Drill", "ops@northwind.example", "Compromised"),
+      createDemoEvent(5, "Credential Hygiene Drill", "ana@northwind.example", "Opened"),
+    ],
+    detections: [
+      { input_type: "email", risk_score: 72, summary: "Seeded demonstration: urgency and suspicious URL." },
+      { input_type: "url", risk_score: 18, summary: "Seeded demonstration: low-risk URL scan." },
+    ],
+  };
+  writeDemoData(seeded);
+  return seeded;
+}
+
+function writeDemoData(data) {
+  localStorage.setItem(demoStorageKey, JSON.stringify(data));
+}
+
+function createDemoEvent(logId, campaignName, targetEmail, status = "Sent") {
+  return {
+    log_id: logId,
+    campaign_name: campaignName,
+    target_email: targetEmail,
+    status,
+    timestamp: new Date().toISOString(),
+  };
+}
+
+function decorateDemoEvent(event) {
+  const baseUrl = window.location.origin;
+  return {
+    ...event,
+    opened_at: simulationStatusFlow.indexOf(event.status) >= simulationStatusFlow.indexOf("Opened") ? event.timestamp : null,
+    clicked_at: simulationStatusFlow.indexOf(event.status) >= simulationStatusFlow.indexOf("Clicked") ? event.timestamp : null,
+    compromised_at: event.status === "Compromised" ? event.timestamp : null,
+    simulated_link: `${baseUrl}/training.html?log_id=${event.log_id}`,
+    tracking_pixel: `${baseUrl}/track/open/${event.log_id}.gif`,
+  };
+}
+
+function getRequestBody(options) {
+  if (!options.body) return {};
+  try {
+    return JSON.parse(options.body);
+  } catch {
+    return {};
+  }
+}
+
+function calculateDemoMetrics(data) {
+  const campaignNames = new Set(data.events.map((event) => event.campaign_name));
+  const clickedEvents = data.events.filter((event) => ["Clicked", "Compromised"].includes(event.status)).length;
+  const statusCounts = data.events.reduce((counts, event) => {
+    counts[event.status] = (counts[event.status] || 0) + 1;
+    return counts;
+  }, {});
+  return {
+    total_campaigns: campaignNames.size,
+    click_through_rate: data.events.length ? Math.round((clickedEvents / data.events.length) * 1000) / 10 : 0,
+    threats_detected: data.detections.filter((item) => item.risk_score >= 50).length,
+    status_counts: statusCounts,
+    events: [...data.events].sort((a, b) => b.log_id - a.log_id).slice(0, 25).map(decorateDemoEvent),
+  };
+}
+
+function updateDemoStatus(data, logId, nextStatus) {
+  const event = data.events.find((item) => item.log_id === logId);
+  if (!event) throw new Error("Simulation log not found");
+  if (simulationStatusFlow.indexOf(nextStatus) >= simulationStatusFlow.indexOf(event.status)) {
+    event.status = nextStatus;
+    event.timestamp = new Date().toISOString();
+  }
+}
+
+function launchDemoSimulation(payload) {
+  if (!payload.safe_test_mode) {
+    throw new Error("Safe Test Mode must remain enabled for local simulations.");
+  }
+  const template = demoTemplates.find((item) => item.key === payload.template_key);
+  if (!template) {
+    throw new Error("Unknown phishing template.");
+  }
+  const emailPattern = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  const emails = [...new Set((payload.target_emails || []).map((email) => String(email).trim().toLowerCase()).filter(Boolean))];
+  if (!emails.length) throw new Error("Add at least one valid target email.");
+  const invalid = emails.find((email) => !emailPattern.test(email));
+  if (invalid) throw new Error(`Invalid target email: ${invalid}`);
+
+  const data = readDemoData();
+  const created = emails.map((email) => {
+    const event = createDemoEvent(data.nextLogId, payload.campaign_name.trim(), email, "Sent");
+    data.nextLogId += 1;
+    data.events.push(event);
+    return decorateDemoEvent(event);
+  });
+  writeDemoData(data);
+  return { campaign_name: payload.campaign_name.trim(), template, created };
+}
+
+function addDemoFinding(findings, title, detail, score, evidence, category) {
+  findings.push({
+    title,
+    detail,
+    score,
+    category,
+    severity: score >= 15 ? "high" : score >= 9 ? "medium" : "low",
+    evidence: evidence.slice(0, 5),
+  });
+}
+
+function analyzeDemoThreat(content, inputType) {
+  const findings = [];
+  let parseWarning = null;
+
+  if (inputType === "email" && !/^(from|reply-to|authentication-results|subject):/im.test(content)) {
+    parseWarning = "Unable to parse headers. Proceeding with text-only lexical scan.";
+  }
+  if (/reply-to:/i.test(content) && /from:/i.test(content)) {
+    const fromDomain = content.match(/from:.*@([^>\s]+)/i)?.[1]?.toLowerCase();
+    const replyDomain = content.match(/reply-to:.*@([^>\s]+)/i)?.[1]?.toLowerCase();
+    if (fromDomain && replyDomain && fromDomain.split(".").slice(-2).join(".") !== replyDomain.split(".").slice(-2).join(".")) {
+      addDemoFinding(findings, "Mismatched Sender Domains", "Reply-To differs from the visible From header domain.", 18, [fromDomain, replyDomain], "Header Validator");
+    }
+  }
+  if (/spf=(fail|softfail)/i.test(content)) {
+    addDemoFinding(findings, "SPF Failure", "Authentication-Results reports SPF failure or soft failure.", 16, ["spf=fail"], "Header Validator");
+  }
+  if (/dkim=fail/i.test(content)) {
+    addDemoFinding(findings, "DKIM Failure", "Authentication-Results reports DKIM failure.", 14, ["dkim=fail"], "Header Validator");
+  }
+  if (/\b(urgent|immediate|within 24 hours|act now|final notice|expires today)\b/i.test(content)) {
+    addDemoFinding(findings, "Urgency Keywords Found", "Message language maps to social-engineering pressure patterns.", 13, ["urgency language"], "Lexical Analysis Engine");
+  }
+  if (/\b(password|login|sign in|credentials|mfa|2fa)\b/i.test(content)) {
+    addDemoFinding(findings, "Credential Request Language", "The content asks for authentication-related action.", 12, ["credential language"], "Lexical Analysis Engine");
+  }
+  if (/\b(wire transfer|invoice|payment failed|billing failure|direct deposit|refund|gift card)\b/i.test(content)) {
+    addDemoFinding(findings, "Financial Coercion Terms", "The content uses financial pressure language.", 12, ["financial language"], "Lexical Analysis Engine");
+  }
+
+  const urls = extractDemoUrls(content);
+  urls.forEach((url) => inspectDemoUrl(url, findings));
+  if (inputType === "url" && urls.length === 0) {
+    addDemoFinding(findings, "Unparseable URL", "The submitted value did not resolve to a URL-like host.", 10, [content.slice(0, 80)], "Entropy & URL Scanner");
+  }
+
+  const riskScore = findings.length ? Math.min(100, findings.reduce((sum, item) => sum + item.score, 0)) : inputType === "url" ? 4 : 6;
+  const result = {
+    input_type: inputType,
+    risk_score: riskScore,
+    severity: riskScore >= 75 ? "Critical" : riskScore >= 50 ? "Elevated" : riskScore >= 25 ? "Guarded" : "Low",
+    parse_warning: parseWarning,
+    findings,
+    urls,
+    analyzed_at: new Date().toISOString(),
+  };
+
+  const data = readDemoData();
+  data.detections.push({
+    input_type: inputType,
+    risk_score: riskScore,
+    summary: findings.map((finding) => finding.title).slice(0, 4).join(", ") || "No major heuristic red flags found",
+  });
+  writeDemoData(data);
+  return result;
+}
+
+function extractDemoUrls(content) {
+  const matches = content.match(/https?:\/\/[^\s<>'"]+|www\.[^\s<>'"]+/gi) || [];
+  if (!matches.length && content.includes(".") && !content.trim().includes(" ")) {
+    matches.push(content.trim());
+  }
+  return [...new Set(matches)].map((url) => (url.match(/^[a-z][a-z0-9+.-]*:\/\//i) ? url : `https://${url}`));
+}
+
+function inspectDemoUrl(url, findings) {
+  let parsed;
+  try {
+    parsed = new URL(url);
+  } catch {
+    addDemoFinding(findings, "Unparseable URL", "The submitted value did not resolve to a URL-like host.", 10, [url.slice(0, 80)], "Entropy & URL Scanner");
+    return;
+  }
+  const host = parsed.hostname.toLowerCase();
+  const evidence = [host];
+  if (parsed.protocol === "http:") {
+    addDemoFinding(findings, "Plain HTTP Link", "The link does not use HTTPS transport.", 5, evidence, "Entropy & URL Scanner");
+  }
+  if (/\d{1,3}(\.\d{1,3}){3}/.test(host)) {
+    addDemoFinding(findings, "Raw IP Address Host", "Legitimate brand mail rarely routes users to bare IP addresses.", 18, evidence, "Entropy & URL Scanner");
+  }
+  if (/\.(zip|top|click|xyz|tk|ru|rest|support|gq)$/i.test(host)) {
+    addDemoFinding(findings, "High-Risk Top-Level Domain", "The host uses a frequently abused top-level domain.", 11, evidence, "Entropy & URL Scanner");
+  }
+  if (/(micros0ft|rnicrosoft|paypa1|netf1ix|g00gle)/i.test(host)) {
+    addDemoFinding(findings, "Look-Alike Brand Domain", "The host resembles a known brand but is not an expected registered domain.", 21, evidence, "Entropy & URL Scanner");
+  }
+}
+
+function handleDemoApiRequest(path, options, originalError) {
+  if (!path.startsWith("/api/")) {
+    throw originalError;
+  }
+
+  const data = readDemoData();
+  if (path === "/api/templates") {
+    return { templates: demoTemplates };
+  }
+  if (path === "/api/metrics") {
+    return calculateDemoMetrics(data);
+  }
+  if (path === "/api/events") {
+    return { events: [...data.events].sort((a, b) => b.log_id - a.log_id).map(decorateDemoEvent) };
+  }
+  if (path === "/api/simulations") {
+    return launchDemoSimulation(getRequestBody(options));
+  }
+  if (path === "/api/analyze/email") {
+    return analyzeDemoThreat(getRequestBody(options).content || "", "email");
+  }
+  if (path === "/api/analyze/url") {
+    return analyzeDemoThreat(getRequestBody(options).content || "", "url");
+  }
+
+  const statusMatch = path.match(/^\/api\/events\/(\d+)\/status$/);
+  if (statusMatch) {
+    const logId = Number(statusMatch[1]);
+    updateDemoStatus(data, logId, getRequestBody(options).status);
+    writeDemoData(data);
+    return { ok: true, log_id: logId, status: getRequestBody(options).status };
+  }
+
+  throw originalError;
 }
 
 function setView(view) {

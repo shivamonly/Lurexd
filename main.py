@@ -33,6 +33,21 @@ def index() -> FileResponse:
     return FileResponse(STATIC_DIR / "index.html")
 
 
+@app.get("/portal.css")
+def portal_css() -> FileResponse:
+    return FileResponse(STATIC_DIR / "portal.css")
+
+
+@app.get("/portal.js")
+def portal_js() -> FileResponse:
+    return FileResponse(STATIC_DIR / "portal.js")
+
+
+@app.get("/training.html", response_class=HTMLResponse)
+def static_training_page() -> FileResponse:
+    return FileResponse(STATIC_DIR / "training.html")
+
+
 @app.get("/api/templates")
 def templates() -> dict[str, Any]:
     return {"templates": [{"key": key, **value} for key, value in PHISHING_TEMPLATES.items()]}
