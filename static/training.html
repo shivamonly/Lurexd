@@ -4,6 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Lurex Training Moment</title>
+    <link rel="icon" href="lurex-logo.svg" type="image/svg+xml">
     <style>
       :root {
         color-scheme: dark;
@@ -56,6 +57,16 @@
         text-transform: uppercase;
       }
 
+      .logo {
+        width: min(240px, 70vw);
+        height: auto;
+        display: block;
+        margin-bottom: 22px;
+        padding: 8px 10px;
+        border-radius: 8px;
+        background: #f8fafc;
+      }
+
       h1 {
         font-size: clamp(32px, 5vw, 56px);
         line-height: 1;
@@ -76,6 +87,7 @@
   </head>
   <body>
     <main>
+      <img class="logo" src="lurex-logo.svg" alt="Lurex">
       <span class="tag">Safe Test Mode</span>
       <h1>This was a test. You clicked on a simulated link.</h1>
       <p>No credentials were collected and no external mail system was used. This static training page is safe for Netlify deployments.</p>
