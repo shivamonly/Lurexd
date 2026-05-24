@@ -6,11 +6,11 @@ from fastapi import FastAPI, Request
 from fastapi.responses import FileResponse, HTMLResponse, Response
 from fastapi.staticfiles import StaticFiles
 
-from .config import DATABASE_PATH, PHISHING_TEMPLATES, STATIC_DIR, TRANSPARENT_PIXEL_GIF
-from .database import initialize_database
-from .detection_engine import analyze_threat_content
-from .schemas import SimulationLaunchRequest, SimulationStatusUpdate, ThreatAnalysisRequest
-from .simulation_service import (
+from config import DATABASE_PATH, PHISHING_TEMPLATES, STATIC_DIR, TRANSPARENT_PIXEL_GIF
+from database import initialize_database
+from detection_engine import analyze_threat_content
+from schemas import SimulationLaunchRequest, SimulationStatusUpdate, ThreatAnalysisRequest
+from simulation_service import (
     calculate_dashboard_metrics,
     create_simulation_events,
     list_recent_events,

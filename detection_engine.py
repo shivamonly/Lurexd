@@ -8,7 +8,7 @@ from email.utils import parseaddr
 from typing import Any, Literal
 from urllib.parse import urlparse
 
-from .config import (
+from config import (
     BRAND_DOMAINS,
     BRAND_NAMES,
     IP_HOST_PATTERN,
@@ -18,7 +18,7 @@ from .config import (
     URL_PATTERN,
     URL_SHORTENER_DOMAINS,
 )
-from .database import connect_database
+from database import connect_database
 
 
 def utc_timestamp() -> str:

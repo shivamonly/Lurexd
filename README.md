@@ -10,7 +10,7 @@ Interactive local cybersecurity training portal with two workflows:
 ## Project Structure
 
 ```text
-phishshield_portal/
+Lurexd/
   netlify.toml             Netlify static deploy configuration
   main.py                  FastAPI routes and app startup
   config.py                Shared paths, templates, regex rules, and constants
@@ -30,8 +30,8 @@ phishshield_portal/
 ## Run
 
 ```powershell
-cd "d:\shivam study material\Websites\task 4"
-python -m uvicorn phishshield_portal.main:app --host 127.0.0.1 --port 8000
+cd "d:\shivam study material\Websites\task 4\Lurexd"
+python -m uvicorn main:app --host 127.0.0.1 --port 8000
 ```
 
 Then open http://127.0.0.1:8000.
@@ -40,7 +40,7 @@ Then open http://127.0.0.1:8000.
 
 This repository is Netlify-friendly as a static deploy:
 
-1. Push this `phishshield_portal` repository to GitHub.
+1. Push this repository to GitHub.
 2. In Netlify, import the GitHub repository.
 3. Netlify will read `netlify.toml` and publish the `static` folder.
 4. Leave the build command empty.
@@ -60,4 +60,4 @@ The simulator does not send external email. Every generated lure URL routes to `
 | Email filter mechanisms | Header validator, lexical scanner, URL scanner | Risk Gauge and Breakdown |
 | Fake website detection | URL structure checks and Levenshtein look-alike matching | Analyze URL tab |
 
-SQLite data is created at `phishshield_portal/data/lurex.db`.
+SQLite data is created at `data/lurex.db`.

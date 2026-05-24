@@ -5,9 +5,9 @@ from typing import Any
 
 from fastapi import HTTPException, Request
 
-from .config import EMAIL_PATTERN, PHISHING_TEMPLATES, SIMULATION_STATUS_ORDER
-from .database import connect_database
-from .schemas import SimulationLaunchRequest
+from config import EMAIL_PATTERN, PHISHING_TEMPLATES, SIMULATION_STATUS_ORDER
+from database import connect_database
+from schemas import SimulationLaunchRequest
 
 
 def is_valid_email_address(email_address: str) -> bool:

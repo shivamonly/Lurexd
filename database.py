@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import sqlite3
 
-from .config import DATABASE_PATH
+from config import DATABASE_PATH
 
 
 def connect_database() -> sqlite3.Connection:
