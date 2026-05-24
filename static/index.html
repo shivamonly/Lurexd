@@ -1,0 +1,265 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PhishShield Portal</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Rajdhani:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/portal.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="#dashboard" data-nav="dashboard" aria-label="PhishShield command center">
+          <span class="brand-mark"><i data-lucide="shield-check"></i></span>
+          <span>
+            <strong>PhishShield</strong>
+            <small>Portal</small>
+          </span>
+        </a>
+
+        <nav class="nav-stack" aria-label="Primary">
+          <button class="nav-item active" type="button" data-nav="dashboard">
+            <i data-lucide="layout-dashboard"></i>
+            <span>Command Center</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="simulation">
+            <i data-lucide="send"></i>
+            <span>Simulation Studio</span>
+          </button>
+          <button class="nav-item" type="button" data-nav="detection">
+            <i data-lucide="radar"></i>
+            <span>Threat Analytics</span>
+          </button>
+        </nav>
+
+        <div class="safe-beacon" aria-live="polite">
+          <span class="pulse-dot"></span>
+          <span>Safe Test Mode</span>
+        </div>
+      </aside>
+
+      <main class="workspace">
+        <header class="topbar">
+          <div>
+            <p class="eyebrow">Cyber Defense Operations</p>
+            <h1 id="viewTitle">Command Center</h1>
+          </div>
+          <div class="top-actions">
+            <button class="icon-button" type="button" id="refreshButton" aria-label="Refresh dashboard" title="Refresh">
+              <i data-lucide="refresh-cw"></i>
+            </button>
+            <span class="runtime-chip"><i data-lucide="database"></i> SQLite Live</span>
+          </div>
+        </header>
+
+        <section id="dashboardView" class="view active" data-view="dashboard">
+          <div class="metrics-grid">
+            <article class="metric-tile tile-blue">
+              <span class="metric-icon"><i data-lucide="activity"></i></span>
+              <p>Total Campaigns</p>
+              <strong id="metricCampaigns">0</strong>
+            </article>
+            <article class="metric-tile tile-yellow">
+              <span class="metric-icon"><i data-lucide="mouse-pointer-click"></i></span>
+              <p>Click-Through Rate</p>
+              <strong><span id="metricCtr">0</span>%</strong>
+            </article>
+            <article class="metric-tile tile-red">
+              <span class="metric-icon"><i data-lucide="shield-alert"></i></span>
+              <p>Threats Detected</p>
+              <strong id="metricThreats">0</strong>
+            </article>
+          </div>
+
+          <div class="dashboard-grid">
+            <section class="panel event-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Live Event Feed</p>
+                  <h2>Simulation Activity</h2>
+                </div>
+                <button class="ghost-button" type="button" id="seedWalkButton">
+                  <i data-lucide="play"></i>
+                  Advance Latest
+                </button>
+              </div>
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Campaign</th>
+                      <th>Target</th>
+                      <th>Status</th>
+                      <th>Timestamp</th>
+                    </tr>
+                  </thead>
+                  <tbody id="eventsTable"></tbody>
+                </table>
+              </div>
+            </section>
+
+            <section class="panel telemetry-panel">
+              <div class="panel-heading">
+                <div>
+                  <p class="eyebrow">Telemetry</p>
+                  <h2>Response Pattern</h2>
+                </div>
+              </div>
+              <div class="signal-map" aria-hidden="true">
+                <span></span><span></span><span></span><span></span><span></span>
+                <span></span><span></span><span></span><span></span><span></span>
+              </div>
+              <div class="status-bars" id="statusBars"></div>
+            </section>
+          </div>
+        </section>
+
+        <section id="simulationView" class="view" data-view="simulation">
+          <div class="wizard-grid">
+            <section class="panel wizard-panel">
+              <div class="stepper" aria-label="Campaign launch steps">
+                <button class="step active" type="button" data-step="1"><span>1</span>Configuration</button>
+                <button class="step" type="button" data-step="2"><span>2</span>Templates</button>
+                <button class="step" type="button" data-step="3"><span>3</span>Launch</button>
+              </div>
+
+              <div class="wizard-step active" data-step-panel="1">
+                <label class="field-label" for="campaignName">Campaign name</label>
+                <input id="campaignName" class="text-input" type="text" value="May Awareness Drill" autocomplete="off">
+
+                <label class="field-label" for="targetInput">Targets</label>
+                <div class="chips-input" id="chipsInput">
+                  <div id="targetChips" class="target-chips" aria-live="polite"></div>
+                  <input id="targetInput" type="text" placeholder="analyst@example.com">
+                </div>
+
+                <label class="safe-toggle">
+                  <input id="safeToggle" type="checkbox" checked>
+                  <span class="toggle-track"><span></span></span>
+                  <strong>Safe Test Mode</strong>
+                </label>
+
+                <div class="wizard-actions">
+                  <button class="primary-button" type="button" data-next-step="2">
+                    <i data-lucide="arrow-right"></i>
+                    Continue
+                  </button>
+                </div>
+              </div>
+
+              <div class="wizard-step" data-step-panel="2">
+                <div class="template-carousel" id="templateCarousel" aria-label="Template carousel"></div>
+                <div class="wizard-actions split">
+                  <button class="ghost-button" type="button" data-prev-step="1">
+                    <i data-lucide="arrow-left"></i>
+                    Back
+                  </button>
+                  <button class="primary-button" type="button" data-next-step="3">
+                    <i data-lucide="arrow-right"></i>
+                    Continue
+                  </button>
+                </div>
+              </div>
+
+              <div class="wizard-step" data-step-panel="3">
+                <div class="launch-summary">
+                  <div>
+                    <span>Campaign</span>
+                    <strong id="summaryCampaign">May Awareness Drill</strong>
+                  </div>
+                  <div>
+                    <span>Targets</span>
+                    <strong id="summaryTargets">0</strong>
+                  </div>
+                  <div>
+                    <span>Template</span>
+                    <strong id="summaryTemplate">Select one</strong>
+                  </div>
+                </div>
+                <div id="launchAlert" class="alert hidden"></div>
+                <div class="wizard-actions split">
+                  <button class="ghost-button" type="button" data-prev-step="2">
+                    <i data-lucide="arrow-left"></i>
+                    Back
+                  </button>
+                  <button class="danger-button" type="button" id="launchButton">
+                    <i data-lucide="rocket"></i>
+                    Launch Simulation
+                  </button>
+                </div>
+              </div>
+            </section>
+
+            <section class="panel preview-panel">
+              <p class="eyebrow">Selected Lure</p>
+              <h2 id="previewTitle">Urgent Microsoft Reset</h2>
+              <div class="mail-preview">
+                <div class="mail-bar"><span></span><span></span><span></span></div>
+                <p class="mail-from">security-notice@training.local</p>
+                <h3 id="previewSubject">Action required: password reset pending</h3>
+                <p id="previewCopy">A familiar enterprise password reset notice with local-only tracking links.</p>
+                <button class="mock-link" type="button">Review Account</button>
+              </div>
+            </section>
+          </div>
+        </section>
+
+        <section id="detectionView" class="view" data-view="detection">
+          <div class="analysis-grid">
+            <section class="panel input-panel">
+              <div class="tab-row" role="tablist" aria-label="Threat input type">
+                <button class="tab active" role="tab" type="button" data-analysis-tab="email">Paste Raw Email Content</button>
+                <button class="tab" role="tab" type="button" data-analysis-tab="url">Analyze URL</button>
+              </div>
+              <textarea id="emailInput" class="analysis-input" spellcheck="false">From: Microsoft Security &lt;security@micros0ft-alerts.com&gt;
+Reply-To: support@account-helpdesk.example
+Authentication-Results: mx.example; spf=fail smtp.mailfrom=micros0ft-alerts.com; dkim=fail
+Subject: Urgent Action Required
+
+Your account will be suspended within 24 hours. Sign in now at https://micros0ft-security-check.xyz/login to verify your password.</textarea>
+              <input id="urlInput" class="text-input hidden" type="url" value="https://micros0ft-security-check.xyz/login">
+              <div class="analysis-actions">
+                <button class="primary-button" type="button" id="analyzeButton">
+                  <i data-lucide="scan-line"></i>
+                  Analyze
+                </button>
+                <button class="ghost-button" type="button" id="clearAnalysisButton">
+                  <i data-lucide="eraser"></i>
+                  Clear
+                </button>
+              </div>
+            </section>
+
+            <section class="panel result-panel">
+              <div class="risk-gauge" id="riskGauge" style="--risk: 0">
+                <div class="gauge-core">
+                  <span id="riskScore">0</span>
+                  <small id="riskSeverity">Low</small>
+                </div>
+              </div>
+              <div id="parseWarning" class="alert warning hidden"></div>
+              <div id="heuristicBreakdown" class="breakdown"></div>
+            </section>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="modal hidden" id="eventModal" role="dialog" aria-modal="true" aria-labelledby="eventModalTitle">
+      <div class="modal-panel">
+        <button class="icon-button close-button" type="button" id="closeModal" aria-label="Close event details">
+          <i data-lucide="x"></i>
+        </button>
+        <p class="eyebrow">Event Detail</p>
+        <h2 id="eventModalTitle">Simulation Interaction</h2>
+        <dl id="eventDetailList"></dl>
+      </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
+    <script src="/static/portal.js"></script>
+  </body>
+</html>
