@@ -1,5 +1,7 @@
 # Lurex Portal
 
+Lurex is a cybersecurity awareness portal for safe phishing simulations and heuristic email/URL threat analysis, built with FastAPI, SQLite, and a Netlify-friendly frontend.
+
 Interactive local cybersecurity training portal with two workflows:
 
 - Simulation Studio creates safe, localhost-only phishing simulations and logs target status in SQLite.
